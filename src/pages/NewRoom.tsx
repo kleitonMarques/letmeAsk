@@ -10,7 +10,7 @@ import '../styles/auth.scss'
 
 export function NewRoom() {
     const navigate = useNavigate()
-    const { user, signInWithGoogle } = UseAuth()
+    const { user } = UseAuth()
     const [newRoom, setNewRoom] = useState('')
 
     async function handleCreateRoom(event: FormEvent) {
