@@ -5,61 +5,22 @@ import { Button } from '../components/Button'
 import { Question } from '../components/Question'
 import { RoomCode } from '../components/RoomCode'
 import { UseAuth } from '../hooks/useAuth'
+import { useRoom } from '../hooks/useRoom'
 import { database } from '../services/firebase'
 
 import '../styles/room.scss'
-
-type FirebaseQuestions = Record<string, {
-    content: string,
-    author: {
-        name: string;
-        avatar: string;
-    }
-    isHighLighted: boolean;
-    isAnswered: boolean;
-}>
-
-type QuestionType = {
-    id: string;
-    content: string,
-    author: {
-        name: string;
-        avatar: string;
-    }
-    isHighLighted: boolean;
-    isAnswered: boolean;
-}
 
 type RoomParams = {
     id: string;
 }
 
 export function Room () {
-    const [newQuestion, setNewQuestion] = useState('')
-    const [questions, setQuestions] = useState<QuestionType[]>([])
-    const [title, setTitle] = useState('')
     const { user } = UseAuth()
     const params = useParams<RoomParams>();
-    const roomId = params.id;
+    const [newQuestion, setNewQuestion] = useState('')
+    const roomId = params.id as string;
+    const { title, questions } = useRoom(roomId)
 
-    useEffect(() => {
-        const roomRef = database.ref(`rooms/${roomId}`)
-        roomRef.on('value', room => {
-            const databaseRoom = room.val();
-            const firebaseQuestions: FirebaseQuestions = databaseRoom.questions ?? {};
-            const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) => {
-                return {
-                    id: key,
-                    content: value.content,
-                    author: value.author,
-                    isHighLighted: value.isHighLighted,
-                    isAnswered: value.isAnswered,
-                }
-            })
-            setTitle(databaseRoom.title)
-            setQuestions(parsedQuestions)
-        })
-    }, [roomId])
 
     async function handleSendQuastion(event: FormEvent) {
         event.preventDefault()
