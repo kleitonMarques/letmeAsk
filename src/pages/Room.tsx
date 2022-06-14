@@ -25,6 +25,7 @@ export function Room () {
     async function handleSendQuastion(event: FormEvent) {
         event.preventDefault()
         if(newQuestion.trim() === '') { return; }
+        tetse
         if(!user) { throw new Error('You must be logged in') }
 
         const question = {
